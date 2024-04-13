@@ -1,14 +1,19 @@
 package com.example.demo.data;
 
+import jakarta.persistence.Entity;
+import lombok.Getter;
+
 import java.security.InvalidParameterException;
 
 /**
  * 9-digit code Банковский идентификационный код
  */
+
 public class BIC {
-    final String value;
+    @Getter
+    final long value;
     BIC(String string) {
-        this.value = string;
+        this.value = Long.parseLong(string);
     }
 
     public static BIC from(String string) {
@@ -20,4 +25,6 @@ public class BIC {
             throw new InvalidParameterException("bic must be 9 digits long");
         }
     }
+
+
 }

@@ -1,17 +1,23 @@
 package com.example.demo.data;
 
 import jakarta.annotation.Nullable;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
-@Builder(builderClassName = "Builder")
+@Builder(builderClassName = "Bulldozer")
 @Data
 @ToString
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class ParticipantInfo {
+    @Id
+    @GeneratedValue
+    long id;
+
     String nameP;
     @Nullable
     String englName;
@@ -28,16 +34,29 @@ public class ParticipantInfo {
     @Nullable
     String adr;
     @Nullable
-    BIC prntBIC;
-    DateString dateIn;
+    long prntBIC;
+    Date dateIn;
     @Nullable
-    DateString dateOut;
+    Date dateOut;
     String ptType;
     String svrvcs;
     String xchType;
-    UID uid;
+    long uid;
     @Nullable
     String participantStatus;
-    @Singular
+    @Singular @OneToMany(cascade = CascadeType.ALL)
     List<Restriction> restrictions;
+
+    public static class Bulldozer {
+        public Bulldozer uid(UID uid) {
+            this.uid = uid.value;
+            return this;
+        }
+
+        public Bulldozer prntBIC(BIC bic) {
+            if (bic != null)
+                this.prntBIC = bic.getValue();
+            return this;
+        }
+    }
 }

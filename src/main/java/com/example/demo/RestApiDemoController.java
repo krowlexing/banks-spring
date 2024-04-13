@@ -1,32 +1,46 @@
 package com.example.demo;
 
+import com.example.demo.data.BICDirectoryEntry;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
 import java.util.Optional;
 
 @RestController
 public class RestApiDemoController {
-    private List<Coffee> coffees = new ArrayList<>();
+    private final BankRepository bankRepository;
 
-    public RestApiDemoController() {
-        coffees.addAll(List.of(
-           new Coffee("кофи"),
-            new Coffee("кофе"),
-            new Coffee("кофэ"),
-            new Coffee("какава"),
-            new Coffee("капучина")
-        ));
+    public RestApiDemoController(BankRepository bankRepository) {
+        this.bankRepository = bankRepository;
     }
 
-    @GetMapping("/coffees")
-    Iterable<Coffee> getCoffees() {
-        return coffees;
+    @GetMapping("/banks")
+    Iterable<BICDirectoryEntry> getCoffees() {
+        return this.bankRepository.findAll();
     }
 
-    @GetMapping("/coffees/{id}")
-    Optional<Coffee> getCoffeeById(@PathVariable String id) {
-        return coffees.stream().filter(c -> c.getId().equals(id)).findFirst();
+    @GetMapping("/banks/init/init")
+    void initBanks() {
+        var handler = new BankXmlParser();
+        handler.onEntryParsed = bankRepository::save;
+        var file = new File("xml/2023.xml");
+        if (file.exists()) {
+            try {
+                var parser = SAXParserFactory.newInstance().newSAXParser();
+                parser.parse(file, handler);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("error");
+        }
+    }
+
+    @GetMapping("/banks/{id}")
+    Optional<BICDirectoryEntry> getCoffeeById(@PathVariable String id) {
+        var instance = this.bankRepository.findById(id);
+
+        return instance;
     }
 }

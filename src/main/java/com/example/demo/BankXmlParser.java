@@ -6,8 +6,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class BankXmlParser extends DefaultHandler {
-    BICDirectoryEntry.Builder currentEntryBuilder;
-    ParticipantInfo.Builder participantBuilder;
+    BICDirectoryEntry.Bulldozer currentEntryBuilder;
+    ParticipantInfo.Bulldozer participantBuilder;
     Account.Builder accountBuilder;
 
     public EntryParsed onEntryParsed;

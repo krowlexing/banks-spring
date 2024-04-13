@@ -1,7 +1,9 @@
 package com.example.demo;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.codec.json.Jackson2JsonEncoder;
 
 import javax.xml.parsers.SAXParserFactory;
 
@@ -35,7 +37,11 @@ public class ParserTests {
             AtomicBoolean first = new AtomicBoolean(true);
             handler.onEntryParsed = entry -> {
                 if (first.get()) {
-                    assertEquals("", entry.toString());
+                    assertDoesNotThrow(() -> {
+                        var json = new ObjectMapper().writeValueAsString(entry);
+                        assertEquals("", json);
+                    });
+
                     first.set(false);
                 }
                 count.getAndIncrement();

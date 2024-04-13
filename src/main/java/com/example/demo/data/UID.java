@@ -2,10 +2,10 @@ package com.example.demo.data;
 
 // 10 digit code
 public class UID {
-    final String value;
+    final long value;
 
     UID(final String value) {
-        this.value = value;
+        this.value = Long.parseLong(value);
     }
 
     public static UID from(final String value) {
