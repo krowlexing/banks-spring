@@ -1,6 +1,7 @@
 package com.example.demo.data;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,12 +14,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@JsonInclude(Include.NON_NULL)
 public class BICDirectoryEntry {
     @Id
     long bic;
     @Nullable
     ChangeType changeType;
     @OneToOne(cascade = CascadeType.ALL)
+    @Setter
     ParticipantInfo participantInfo;
     @Singular
     @OneToMany(cascade = CascadeType.ALL)
@@ -37,6 +40,9 @@ public class BICDirectoryEntry {
 
     public void setBic(BIC bic) {
         this.bic = bic.getValue();
+    }
+    public void setBic(long bic) {
+        this.bic = bic;
     }
 
     public static class Bulldozer {

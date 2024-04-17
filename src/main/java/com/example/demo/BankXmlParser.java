@@ -60,11 +60,11 @@ public class BankXmlParser extends DefaultHandler {
 
     void participantInfoStart(Attributes attributes) {
         participantBuilder = ParticipantInfo.builder()
-                .nameP(attributes.getValue("NameP"))
-                .englName(attributes.getValue("EnglName"))
+                .russianName(attributes.getValue("NameP"))
+                .englishName(attributes.getValue("EnglName"))
                 .regN(attributes.getValue("RegN"))
-                .cntrCd(attributes.getValue("CntrCd"))
-                .rgn(attributes.getValue("Rgn"))
+                .countryCode(attributes.getValue("CntrCd"))
+                .region(attributes.getValue("Rgn"))
                 .ind(attributes.getValue("Ind"))
                 .tnp(attributes.getValue("Tnp"))
                 .nnp(attributes.getValue("Nnp"))

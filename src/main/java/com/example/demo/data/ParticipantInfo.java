@@ -18,14 +18,14 @@ public class ParticipantInfo {
     @GeneratedValue
     long id;
 
-    String nameP;
+    String russianName;
     @Nullable
-    String englName;
+    String englishName;
     @Nullable
     String regN;
     @Nullable
-    String cntrCd;
-    String rgn;
+    String countryCode;
+    String region;
     @Nullable
     String ind;
     String tnp;
@@ -34,7 +34,7 @@ public class ParticipantInfo {
     @Nullable
     String adr;
     @Nullable
-    long prntBIC;
+    long parentBic;
     Date dateIn;
     @Nullable
     Date dateOut;
@@ -55,7 +55,7 @@ public class ParticipantInfo {
 
         public Bulldozer prntBIC(BIC bic) {
             if (bic != null)
-                this.prntBIC = bic.getValue();
+                this.parentBic = bic.getValue();
             return this;
         }
     }

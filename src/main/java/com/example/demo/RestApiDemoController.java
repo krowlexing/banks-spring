@@ -20,6 +20,16 @@ public class RestApiDemoController {
         return this.bankRepository.findAll();
     }
 
+    @PostMapping("/banks/{bic}")
+    void updateBank(@PathVariable String bic, @RequestBody BICDirectoryEntry updatedBank) {
+        Optional<BICDirectoryEntry> maybeBank = bankRepository.findById(Long.parseLong(bic));
+        if (maybeBank.isPresent()) {
+            var bank = maybeBank.get();
+            bank.setParticipantInfo(updatedBank.getParticipantInfo());
+            bankRepository.save(bank);
+        }
+    }
+
     @GetMapping("/banks/init/init")
     void initBanks() {
         var handler = new BankXmlParser();
@@ -39,7 +49,7 @@ public class RestApiDemoController {
 
     @GetMapping("/banks/{id}")
     Optional<BICDirectoryEntry> getCoffeeById(@PathVariable String id) {
-        var instance = this.bankRepository.findById(id);
+        var instance = this.bankRepository.findById(Long.parseLong(id));
 
         return instance;
     }
