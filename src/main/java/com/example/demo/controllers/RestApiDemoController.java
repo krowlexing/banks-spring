@@ -1,5 +1,7 @@
-package com.example.demo;
+package com.example.demo.controllers;
 
+import com.example.demo.repositories.BankRepository;
+import com.example.demo.parser.BankXmlParser;
 import com.example.demo.data.BICDirectoryEntry;
 import org.springframework.web.bind.annotation.*;
 

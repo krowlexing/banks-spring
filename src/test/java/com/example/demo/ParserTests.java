@@ -1,9 +1,9 @@
 package com.example.demo;
 
 
+import com.example.demo.parser.BankXmlParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.codec.json.Jackson2JsonEncoder;
 
 import javax.xml.parsers.SAXParserFactory;
 
