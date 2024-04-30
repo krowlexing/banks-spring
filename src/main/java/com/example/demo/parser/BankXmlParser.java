@@ -1,14 +1,23 @@
 package com.example.demo.parser;
 
 import com.example.demo.data.*;
+import lombok.Getter;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
 
 public class BankXmlParser extends DefaultHandler {
     BICDirectoryEntry.Bulldozer currentEntryBuilder;
     ParticipantInfo.Bulldozer participantBuilder;
     Account.Builder accountBuilder;
+
+    ED807.ED807Builder edBuilder;
+
+    @Getter
+    ED807 result;
 
     public EntryParsed onEntryParsed;
 
@@ -37,12 +46,35 @@ public class BankXmlParser extends DefaultHandler {
         super.startElement(uri, localName, qName, attrs);
 
         switch (qName) {
+            case "ED807" -> ed807Start(attrs);
             case "BICDirectoryEntry" -> bicDirectoryEntryStart(attrs);
             case "ParticipantInfo" -> participantInfoStart(attrs);
             case "RstrList" -> restrictionStart(attrs);
             case "SWBICS" -> swbicsStart(attrs);
             case "Accounts" -> accountStart(attrs);
             case "AccRstrList" -> accountRestrictionStart(attrs);
+        }
+    }
+
+    void ed807Start(Attributes attrs) {
+        edBuilder = ED807.builder()
+                .edNo(parseInt(attrs.getValue("EDNo")))
+                .edDate(DateString.from(attrs.getValue("EDDate")))
+                .author(parseLong(attrs.getValue("EDAuthor")))
+                .creationReason(attrs.getValue("CreationReason"))
+                .creationDateTime(DateString.from(attrs.getValue("CreationDateTime")))
+                .infoTypeCode(attrs.getValue("InfoTypeCode"))
+                .businessDay(DateString.from(attrs.getValue("BusinessDay")));
+
+        //TODO beautify;
+        var receiver = attrs.getValue("EDReceiver");
+        if (receiver != null) {
+            edBuilder.receiver(parseLong(receiver));
+        }
+
+        var directoryVersion = attrs.getValue("DirectoryVersion");
+        if (directoryVersion != null) {
+            edBuilder.directoryVersion(parseInt(directoryVersion));
         }
     }
 
@@ -121,14 +153,18 @@ public class BankXmlParser extends DefaultHandler {
     }
 
     void bicDirectoryEntryEnd() {
-        onEntryParsed.entryParsed(currentEntryBuilder.build());
+        edBuilder.entry(currentEntryBuilder.build());
+    }
 
+    void ed807End() {
+        result = edBuilder.build();
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
         switch (qName) {
+            case "ED807" -> ed807End();
             case "BICDirectoryEntry" -> bicDirectoryEntryEnd();
             case "ParticipantInfo" -> participantInfoEnd();
             case "Accounts" -> accountEnd();
