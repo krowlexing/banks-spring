@@ -1,21 +1,20 @@
 package com.example.demo.services;
 
+import com.example.demo.data.ED807;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+// save files -> load ED807s
 public interface StorageService {
-    void init();
-
     void store(MultipartFile file);
 
-    Stream<Path> loadAll();
+    Iterable<ED807> loadAll();
 
-    Path load(String filename);
-
-    Resource loadAsResource(String filename);
+    Optional<ED807> load(Long id);
 
     void deleteAll();
 }

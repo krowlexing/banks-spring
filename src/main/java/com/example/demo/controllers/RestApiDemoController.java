@@ -3,19 +3,31 @@ package com.example.demo.controllers;
 import com.example.demo.repositories.BankRepository;
 import com.example.demo.parser.BankXmlParser;
 import com.example.demo.data.BICDirectoryEntry;
+import com.example.demo.services.ParsingService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.parsers.SAXParserFactory;
-import java.io.File;
+import java.io.*;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+import java.util.Date;
 import java.util.Optional;
+import java.util.Timer;
+
+import static java.time.temporal.ChronoUnit.MILLIS;
 
 @RestController
 public class RestApiDemoController {
     private final BankRepository bankRepository;
+    private final ParsingService parsingService;
 
-    public RestApiDemoController(BankRepository bankRepository) {
+    public RestApiDemoController(BankRepository bankRepository, ParsingService parsingService) {
         this.bankRepository = bankRepository;
+        this.parsingService = parsingService;
     }
+
+
 
     @GetMapping("/banks")
     Iterable<BICDirectoryEntry> getCoffees() {
@@ -34,18 +46,24 @@ public class RestApiDemoController {
 
     @GetMapping("/banks/init/init")
     void initBanks() {
-        var handler = new BankXmlParser();
-        handler.onEntryParsed = bankRepository::save;
         var file = new File("xml/2023.xml");
-        if (file.exists()) {
-            try {
-                var parser = SAXParserFactory.newInstance().newSAXParser();
-                parser.parse(file, handler);
-            } catch (Exception e) {
-                e.printStackTrace();
+        try (var stream = new FileInputStream(file)){
+            var ed807 = parsingService.parse(stream);
+
+            if (ed807 != null) {
+                System.out.println("saving ed807 entries");
+                var before = Instant.now();
+                bankRepository.saveAll(ed807.getEntries());
+                var after = Instant.now();
+
+                var elapsed = before.until(after, MILLIS);
+                System.out.println("saving complete. Elapsed " + elapsed + " ms");
             }
-        } else {
+        } catch (FileNotFoundException e){
+            System.out.println("file not found");
             System.out.println("error");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
