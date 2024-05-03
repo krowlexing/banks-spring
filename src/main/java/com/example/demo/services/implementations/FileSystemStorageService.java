@@ -27,12 +27,10 @@ import java.util.stream.Collectors;
 @Service
 public class FileSystemStorageService implements StorageService {
 
-    private final Ed807Repository entryRepository;
     private final ParsingService parsingService;
     private final Path rootLocation;
 
-    public FileSystemStorageService(Ed807Repository entryRepository, ParsingService parsingService) {
-        this.entryRepository = entryRepository;
+    public FileSystemStorageService(ParsingService parsingService) {
         this.parsingService = parsingService;
 
         var uploadDir = new File("upload");
@@ -75,7 +73,12 @@ public class FileSystemStorageService implements StorageService {
                     .map(this.rootLocation::relativize)
                     .map(this.rootLocation::resolve);
 
-            var ed807s = paths.map(path -> processFile(path.toFile(), parsingService::parse)).collect(Collectors.toList());
+            var ed807s = paths.map(path -> {
+                var hashcode = path.hashCode();
+                var ed807 =  processFile(path.toFile(), parsingService::parse);
+                ed807.setId(Integer.valueOf(hashcode).longValue());
+                return ed807;
+            }).collect(Collectors.toList());
 
             System.out.println("collected");
 

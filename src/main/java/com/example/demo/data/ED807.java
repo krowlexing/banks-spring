@@ -1,5 +1,6 @@
 package com.example.demo.data;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
@@ -24,6 +25,7 @@ public class ED807 {
     Long id;
 
     int edNo;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     Date edDate;
     long author;
     @Nullable
@@ -31,6 +33,7 @@ public class ED807 {
     String creationReason;
     Date creationDateTime;
     String infoTypeCode;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     Date businessDay;
     @Nullable
     int directoryVersion;

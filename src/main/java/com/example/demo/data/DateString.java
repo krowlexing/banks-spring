@@ -1,10 +1,8 @@
 package com.example.demo.data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -26,6 +24,6 @@ public class DateString {
         var month = Integer.parseInt(value.substring(5, 7));
         var day = Integer.parseInt(value.substring(8, 10));
         var unixTime= LocalDate.of(year, month, day).toEpochSecond(LocalTime.MIDNIGHT, ZoneOffset.ofHours(0));
-        return new Date(unixTime);
+        return new Date(unixTime * 1000);
     }
 }
