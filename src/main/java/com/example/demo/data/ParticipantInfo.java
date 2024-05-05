@@ -1,5 +1,6 @@
 package com.example.demo.data;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,8 +36,10 @@ public class ParticipantInfo {
     String adr;
     @Nullable
     long parentBic;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     Date dateIn;
     @Nullable
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     Date dateOut;
     String ptType;
     String svrvcs;

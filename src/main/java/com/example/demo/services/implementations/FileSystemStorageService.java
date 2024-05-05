@@ -1,9 +1,9 @@
 package com.example.demo.services.implementations;
 
 import com.example.demo.data.ED807;
-import com.example.demo.repositories.Ed807Repository;
 import com.example.demo.services.ParsingService;
 import com.example.demo.services.StorageService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -25,6 +25,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@Log4j2
 public class FileSystemStorageService implements StorageService {
 
     private final ParsingService parsingService;
@@ -45,16 +46,18 @@ public class FileSystemStorageService implements StorageService {
     public void store(MultipartFile file) {
         try {
             if (file.isEmpty()) {
-                System.out.println("empty file");
+                log.error("ed807 upload: empty file");
             }
             Path destinationFile = this.rootLocation.resolve(
                             Paths.get(file.getOriginalFilename()))
                     .normalize().toAbsolutePath();
             if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
-                // This is a security check
-                System.out.println("file parent: " + destinationFile.getParent());
-                System.out.println("root: " + this.rootLocation.toAbsolutePath());
-                System.out.println("cant store files outside cwd");
+                log.error("file parent: " + destinationFile.getParent() + "\n" +
+                        "root: " + this.rootLocation.toAbsolutePath() + "\n" +
+                        "cant store files outside cwd"
+                );
+
+
             }
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, destinationFile,
@@ -80,7 +83,7 @@ public class FileSystemStorageService implements StorageService {
                 return ed807;
             }).collect(Collectors.toList());
 
-            System.out.println("collected");
+            log.info("ed807s request fulfilled");
 
             return ed807s;
         } catch (IOException e) {

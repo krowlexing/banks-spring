@@ -4,6 +4,7 @@ import com.example.demo.repositories.BankRepository;
 import com.example.demo.parser.BankXmlParser;
 import com.example.demo.data.BICDirectoryEntry;
 import com.example.demo.services.ParsingService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.parsers.SAXParserFactory;
@@ -18,6 +19,7 @@ import java.util.Timer;
 import static java.time.temporal.ChronoUnit.MILLIS;
 
 @RestController
+@Log4j2
 public class RestApiDemoController {
     private final BankRepository bankRepository;
     private final ParsingService parsingService;
@@ -41,29 +43,6 @@ public class RestApiDemoController {
             var bank = maybeBank.get();
             bank.setParticipantInfo(updatedBank.getParticipantInfo());
             bankRepository.save(bank);
-        }
-    }
-
-    @GetMapping("/banks/init/init")
-    void initBanks() {
-        var file = new File("xml/2023.xml");
-        try (var stream = new FileInputStream(file)){
-            var ed807 = parsingService.parse(stream);
-
-            if (ed807 != null) {
-                System.out.println("saving ed807 entries");
-                var before = Instant.now();
-                bankRepository.saveAll(ed807.getEntries());
-                var after = Instant.now();
-
-                var elapsed = before.until(after, MILLIS);
-                System.out.println("saving complete. Elapsed " + elapsed + " ms");
-            }
-        } catch (FileNotFoundException e){
-            System.out.println("file not found");
-            System.out.println("error");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
